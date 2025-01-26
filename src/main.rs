@@ -9,11 +9,19 @@ fn epsilon() -> f32 {
     0.2
 }
 
+fn mutate_intermediary_cell(map: &mut [[f32; SIZE + 1]; SIZE + 1], row1: usize, col1: usize, row2: usize, col2: usize) {
+    let row = (row1 + row2) / 2;
+    let col = (col1 + col2) / 2;
+
+    if map[row][col] == 0.0 {
+        map[row][col] = (map[row1][col1] + map[row2][col2]) / 2.0 + epsilon();
+    }
+}
+
 fn mutate_map(map: &mut [[f32; SIZE + 1]; SIZE + 1], delimiter: [usize; 4]) {
     let [top, left, _bottom, right] = delimiter;
-    let center = (left + right) / 2;
 
-    if map[top][center] == 0.0 { map[top][center] = (map[top][left] + map[top][right]) / 2.0 + epsilon(); }
+    mutate_intermediary_cell(map, top, left, top, right);
 }
 
 fn main() {
