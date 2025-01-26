@@ -3,6 +3,11 @@ const SIZE: usize = 2_u32.pow(SIZE_ORDER) as usize;
 
 fn generate_submap_delimiters(submap_delimiters: &mut Vec<[usize; 4]>, top: usize, left: usize, bottom: usize, right: usize) {
     submap_delimiters.push([top, left, bottom, right]);
+
+    let middle = (left + right) / 2;
+    let center = (top + bottom) / 2;
+    if middle - left <= 1 { return; }
+    generate_submap_delimiters(submap_delimiters, top, left, center, middle);
 }
 
 fn epsilon() -> f32 {
