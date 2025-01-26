@@ -19,9 +19,13 @@ fn mutate_intermediary_cell(map: &mut [[f32; SIZE + 1]; SIZE + 1], row1: usize, 
 }
 
 fn mutate_map(map: &mut [[f32; SIZE + 1]; SIZE + 1], delimiter: [usize; 4]) {
-    let [top, left, _bottom, right] = delimiter;
+    let [top, left, bottom, right] = delimiter;
 
     mutate_intermediary_cell(map, top, left, top, right);
+    mutate_intermediary_cell(map, bottom, left, bottom, right);
+    mutate_intermediary_cell(map, top, left, bottom, left);
+    mutate_intermediary_cell(map, top, right, bottom, right);
+    mutate_intermediary_cell(map, top, left, bottom, right);
 }
 
 fn main() {
