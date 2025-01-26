@@ -2,7 +2,7 @@ use rand::prelude::*;
 use rand_chacha::ChaCha8Rng;
 
 const ISLAND_ID: u64 = 2;
-const SIZE_ORDER: u32 = 4;
+const SIZE_ORDER: u32 = 6;
 const SIZE: usize = 2_u32.pow(SIZE_ORDER) as usize;
 
 fn generate_submap_delimiters(submap_delimiters: &mut Vec<[usize; 4]>, top: usize, left: usize, bottom: usize, right: usize) {
@@ -55,9 +55,10 @@ fn main() {
 
     for row in map {
         for cell in row {
-            let printable_cell = if cell > 0.5 { "• " }
-                                 else if cell > 0.1 { "+ " }
-                                 else { "· " };
+            let printable_cell = if cell > 0.8 { "• " }
+                                 else if cell > 0.5 { "+ " }
+                                 else if cell > 0.3 { ". " }
+                                 else { "  " };
             print!("{printable_cell}");
         }
         println!();
