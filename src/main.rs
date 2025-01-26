@@ -1,7 +1,7 @@
 use rand::prelude::*;
 use rand_chacha::ChaCha8Rng;
 
-const ISLAND_ID: u64 = 2;
+const ISLAND_ID: u64 = 12345;
 const SIZE_ORDER: u32 = 6;
 const SIZE: usize = 2_u32.pow(SIZE_ORDER) as usize;
 
@@ -25,7 +25,7 @@ fn submap_delimiters() -> Vec<[usize; 4]> {
 }
 
 fn epsilon(rng: &mut ChaCha8Rng) -> f32 {
-    0.3*(rng.gen::<f32>() - 0.5)
+    0.25*(rng.gen::<f32>() - 0.5)
 }
 
 fn mutate_intermediary_cell(rng: &mut ChaCha8Rng, map: &mut [[f32; SIZE + 1]; SIZE + 1], points: Vec<[usize; 2]>) {
@@ -71,9 +71,9 @@ fn init_map(submap_delimiters: Vec<[usize; 4]>) -> [[f32; SIZE + 1]; SIZE + 1] {
 fn draw(map: [[f32; SIZE + 1]; SIZE + 1]) {
     for row in map {
         for cell in row {
-            let printable_cell = if cell > 0.8 { "• " }
-                                 else if cell > 0.5 { "+ " }
-                                 else if cell > 0.3 { ". " }
+            let printable_cell = if cell > 0.7 { "• " }
+                                 else if cell > 0.45 { "+ " }
+                                 else if cell > 0.35 { ". " }
                                  else { "  " };
             print!("{printable_cell}");
         }
