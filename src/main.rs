@@ -72,6 +72,7 @@ fn draw(map: [[f32; SIZE + 1]; SIZE + 1]) {
     for row in map {
         for cell in row {
             let printable_cell = if cell > 0.7 { "• " }
+                                 else if cell > 0.6 { "○ " }
                                  else if cell > 0.45 { "+ " }
                                  else if cell > 0.35 { ". " }
                                  else { "  " };
