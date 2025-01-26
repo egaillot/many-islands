@@ -8,6 +8,9 @@ fn generate_submap_delimiters(submap_delimiters: &mut Vec<[usize; 4]>, top: usiz
     let center = (top + bottom) / 2;
     if middle - left <= 1 { return; }
     generate_submap_delimiters(submap_delimiters, top, left, center, middle);
+    generate_submap_delimiters(submap_delimiters, top, middle, center, right);
+    generate_submap_delimiters(submap_delimiters, center, left, bottom, middle);
+    generate_submap_delimiters(submap_delimiters, center, middle, bottom, right);
 }
 
 fn epsilon() -> f32 {
