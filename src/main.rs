@@ -59,10 +59,7 @@ fn init_map(submap_delimiters: Vec<[usize; 4]>) -> [[f32; SIZE + 1]; SIZE + 1] {
     map
 }
 
-fn main() {
-    let submap_delimiters = submap_delimiters();
-    let map = init_map(submap_delimiters);
-
+fn draw(map: [[f32; SIZE + 1]; SIZE + 1]) {
     for row in map {
         for cell in row {
             let printable_cell = if cell > 0.8 { "• " }
@@ -73,4 +70,10 @@ fn main() {
         }
         println!();
     }
+}
+
+fn main() {
+    let submap_delimiters = submap_delimiters();
+    let map = init_map(submap_delimiters);
+    draw(map);
 }
