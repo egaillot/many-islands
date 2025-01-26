@@ -47,17 +47,21 @@ fn mutate_map(rng: &mut ChaCha8Rng, map: &mut [[f32; SIZE + 1]; SIZE + 1], delim
     mutate_intermediary_cell(rng, map, top, left, bottom, right);
 }
 
-fn main() {
-    let submap_delimiters = submap_delimiters();
-
+fn init_map(submap_delimiters: Vec<[usize; 4]>) -> [[f32; SIZE + 1]; SIZE + 1] {
     let mut map = [[0.0; SIZE + 1]; SIZE + 1];
-    map[SIZE / 2][SIZE / 2] = 1.0;
-
     let mut rng = ChaCha8Rng::seed_from_u64(ISLAND_ID);
 
+    map[SIZE / 2][SIZE / 2] = 1.0;
     for delimiter in submap_delimiters {
         mutate_map(&mut rng, &mut map, delimiter)
     }
+
+    map
+}
+
+fn main() {
+    let submap_delimiters = submap_delimiters();
+    let map = init_map(submap_delimiters);
 
     for row in map {
         for cell in row {
