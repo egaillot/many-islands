@@ -1,3 +1,7 @@
+use rand::prelude::*;
+use rand_chacha::ChaCha8Rng;
+
+const ISLAND_ID: u64 = 2;
 const SIZE_ORDER: u32 = 4;
 const SIZE: usize = 2_u32.pow(SIZE_ORDER) as usize;
 
@@ -13,27 +17,27 @@ fn generate_submap_delimiters(submap_delimiters: &mut Vec<[usize; 4]>, top: usiz
     generate_submap_delimiters(submap_delimiters, center, middle, bottom, right);
 }
 
-fn epsilon() -> f32 {
-    0.2
+fn epsilon(rng: &mut ChaCha8Rng) -> f32 {
+    0.3*(rng.gen::<f32>() - 0.5)
 }
 
-fn mutate_intermediary_cell(map: &mut [[f32; SIZE + 1]; SIZE + 1], row1: usize, col1: usize, row2: usize, col2: usize) {
+fn mutate_intermediary_cell(rng: &mut ChaCha8Rng, map: &mut [[f32; SIZE + 1]; SIZE + 1], row1: usize, col1: usize, row2: usize, col2: usize) {
     let row = (row1 + row2) / 2;
     let col = (col1 + col2) / 2;
 
     if map[row][col] == 0.0 {
-        map[row][col] = (map[row1][col1] + map[row2][col2]) / 2.0 + epsilon();
+        map[row][col] = (map[row1][col1] + map[row2][col2]) / 2.0 + epsilon(rng);
     }
 }
 
-fn mutate_map(map: &mut [[f32; SIZE + 1]; SIZE + 1], delimiter: [usize; 4]) {
+fn mutate_map(rng: &mut ChaCha8Rng, map: &mut [[f32; SIZE + 1]; SIZE + 1], delimiter: [usize; 4]) {
     let [top, left, bottom, right] = delimiter;
 
-    mutate_intermediary_cell(map, top, left, top, right);
-    mutate_intermediary_cell(map, bottom, left, bottom, right);
-    mutate_intermediary_cell(map, top, left, bottom, left);
-    mutate_intermediary_cell(map, top, right, bottom, right);
-    mutate_intermediary_cell(map, top, left, bottom, right);
+    mutate_intermediary_cell(rng, map, top, left, top, right);
+    mutate_intermediary_cell(rng, map, bottom, left, bottom, right);
+    mutate_intermediary_cell(rng, map, top, left, bottom, left);
+    mutate_intermediary_cell(rng, map, top, right, bottom, right);
+    mutate_intermediary_cell(rng, map, top, left, bottom, right);
 }
 
 fn main() {
@@ -43,8 +47,10 @@ fn main() {
     let mut map = [[0.0; SIZE + 1]; SIZE + 1];
     map[SIZE / 2][SIZE / 2] = 1.0;
 
+    let mut rng = ChaCha8Rng::seed_from_u64(ISLAND_ID);
+
     for delimiter in submap_delimiters {
-        mutate_map(&mut map, delimiter)
+        mutate_map(&mut rng, &mut map, delimiter)
     }
 
     for row in map {
