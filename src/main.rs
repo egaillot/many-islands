@@ -17,6 +17,13 @@ fn generate_submap_delimiters(submap_delimiters: &mut Vec<[usize; 4]>, top: usiz
     generate_submap_delimiters(submap_delimiters, center, middle, bottom, right);
 }
 
+fn submap_delimiters() -> Vec<[usize; 4]> {
+    let mut submap_delimiters: Vec<[usize; 4]> = Vec::new();
+    generate_submap_delimiters(&mut submap_delimiters, 0, 0, SIZE, SIZE);
+
+    submap_delimiters
+}
+
 fn epsilon(rng: &mut ChaCha8Rng) -> f32 {
     0.3*(rng.gen::<f32>() - 0.5)
 }
@@ -41,8 +48,7 @@ fn mutate_map(rng: &mut ChaCha8Rng, map: &mut [[f32; SIZE + 1]; SIZE + 1], delim
 }
 
 fn main() {
-    let mut submap_delimiters: Vec<[usize; 4]> = Vec::new();
-    generate_submap_delimiters(&mut submap_delimiters, 0, 0, SIZE, SIZE);
+    let submap_delimiters = submap_delimiters();
 
     let mut map = [[0.0; SIZE + 1]; SIZE + 1];
     map[SIZE / 2][SIZE / 2] = 1.0;
