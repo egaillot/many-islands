@@ -5,7 +5,8 @@ const ISLAND_ID: u64 = 12345;
 const SIZE_ORDER: u32 = 6;
 const SIZE: usize = 2_u32.pow(SIZE_ORDER) as usize;
 
-fn generate_submap_delimiters(submap_delimiters: &mut Vec<[usize; 4]>, top: usize, left: usize, bottom: usize, right: usize) {
+fn generate_submap_delimiters(submap_delimiters: &mut Vec<[usize; 4]>,
+                              top: usize, left: usize, bottom: usize, right: usize) {
     submap_delimiters.push([top, left, bottom, right]);
 
     let middle = (left + right) / 2;
@@ -28,7 +29,9 @@ fn epsilon(rng: &mut ChaCha8Rng) -> f32 {
     0.25*(rng.gen::<f32>() - 0.5)
 }
 
-fn mutate_intermediary_cell(rng: &mut ChaCha8Rng, map: &mut [[f32; SIZE + 1]; SIZE + 1], points: Vec<[usize; 2]>) {
+fn mutate_intermediary_cell<const N: usize> (rng: &mut ChaCha8Rng,
+                            map: &mut [[f32; SIZE + 1]; SIZE + 1],
+                            points: [[usize; 2]; N]) {
     let mut row = 0;
     let mut col = 0;
     let mut elevation = 0.0;
@@ -39,21 +42,21 @@ fn mutate_intermediary_cell(rng: &mut ChaCha8Rng, map: &mut [[f32; SIZE + 1]; SI
         elevation = elevation + map[*p_row][*p_col];
     }
 
-    row = row / points.len();
-    col = col / points.len();
-    elevation = elevation / points.len() as f32 + epsilon(rng);
+    row = row / N;
+    col = col / N;
+    elevation = elevation / N as f32 + epsilon(rng);
 
     if map[row][col] == 0.0 { map[row][col] = elevation; }
 }
 
-fn mutate_map(rng: &mut ChaCha8Rng, map: &mut [[f32; SIZE + 1]; SIZE + 1], delimiter: [usize; 4]) {
-    let [top, left, bottom, right] = delimiter;
-
-    mutate_intermediary_cell(rng, map, vec![[top, left], [top, right]]);
-    mutate_intermediary_cell(rng, map, vec![[bottom, left], [bottom, right]]);
-    mutate_intermediary_cell(rng, map, vec![[top, left], [bottom, left]]);
-    mutate_intermediary_cell(rng, map, vec![[top, right], [bottom, right]]);
-    mutate_intermediary_cell(rng, map, vec![[top, left], [top, right], [bottom, left], [bottom, right]]);
+fn mutate_map(rng: &mut ChaCha8Rng,
+              map: &mut [[f32; SIZE + 1]; SIZE + 1],
+              [top, left, bottom, right]: [usize; 4]) {
+    mutate_intermediary_cell(rng, map, [[top, left], [top, right]]);
+    mutate_intermediary_cell(rng, map, [[bottom, left], [bottom, right]]);
+    mutate_intermediary_cell(rng, map, [[top, left], [bottom, left]]);
+    mutate_intermediary_cell(rng, map, [[top, right], [bottom, right]]);
+    mutate_intermediary_cell(rng, map, [[top, left], [top, right], [bottom, left], [bottom, right]]);
 }
 
 fn init_map(submap_delimiters: Vec<[usize; 4]>) -> [[f32; SIZE + 1]; SIZE + 1] {
@@ -71,12 +74,12 @@ fn init_map(submap_delimiters: Vec<[usize; 4]>) -> [[f32; SIZE + 1]; SIZE + 1] {
 fn draw(map: [[f32; SIZE + 1]; SIZE + 1]) {
     for row in map {
         for cell in row {
-            let printable_cell = if cell > 0.7 { "• " }
-                                 else if cell > 0.6 { "○ " }
-                                 else if cell > 0.45 { "+ " }
-                                 else if cell > 0.35 { ". " }
-                                 else { "  " };
-            print!("{printable_cell}");
+            let printable_cell = if cell > 0.7 { "•" }
+                                 else if cell > 0.6 { "○" }
+                                 else if cell > 0.45 { "+" }
+                                 else if cell > 0.35 { "." }
+                                 else { " " };
+            print!("{printable_cell} ");
         }
         println!();
     }
